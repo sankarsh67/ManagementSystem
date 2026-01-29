@@ -1,5 +1,5 @@
-from cli.employee_menu import employeeSignup
-
+from cli.employee_menu import employeeLogin,employeeSignup
+from cli.admin_menu import adminLogin
 def menu():
     while True:
         print('''Welcome
@@ -8,11 +8,11 @@ Press 2 for employee signup
 Press 3 for employee login''')
         choice = int(input('Enter your option :'))
         if choice == 1:
-            pass
+            adminLogin()
         elif choice == 2:
             employeeSignup()
         elif choice == 3:
-            pass
+            employeeLogin()
         else:
             print('Enter a valid number!!')
         

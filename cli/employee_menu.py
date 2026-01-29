@@ -1,18 +1,51 @@
 from services.auth import EmployeeAuthentication
 from repositories.employee_repo import EmployeeDB
+from validation.email_validator import email_vali
+from validation.pass_validator import password_vali
+from getpass4 import getpass
+from utils.pass_hash import password_hasher,check_password
 
-#this object of employee repo
+#This function is for employee repo
 emp_db = EmployeeDB()
-#thi
+
 emp_auth = EmployeeAuthentication(emp_db)
 
-#this functiobn for signup new employee
+# This function is for signup new employee
 def employeeSignup():
     print('Employee Signup')
-    name = input('Enter your name :')
-    email = input('Enter your email :')
-    password = input('Enter your password :')
-    emp_auth.creationEmployee(name,email,password)
-    
+    name = input('enter your name:')
+    email = input('enter your email:')
+    verify_email = emp_db.searchEmp(email)
+    if verify_email is None:
+        if email_vali(email=email) is not None:
+            password = getpass('enter your password:')
+            confirm_pw =getpass('enter your password again:')
+            if password == confirm_pw:
+                if password_vali(password):
+                    password = password_hasher(password)
+                    emp_auth.createEmployee(name,email,password)
+                else:
+                    print('''password is not valid
+                  password should minimum length of 5
+                  password should contain uppercase characters ex: A B C.....
+                  password should contain special characters ex: ! @ # $.....
+                  password should contain digits ex: 1 2 3.....''')
+                    employeeSignup()
+            else:
+                print('password and confirm_pw both are not same')
+                employeeSignup()        
+        else:
+            print(''' email id is not valid !!!!!!''')
+            employeeSignup()
+    else:
+        print(f'account with thisemail id {email} is already exist.login')
+        employeeLogin
 def employeeLogin():
-    print('Employee Login')
+    print('employee Login')
+    email = input('enter your email id:')
+    password = getpass('enter your password:')
+    hashed_pw = emp_auth.empLogin(email)
+    if check_password(password,hashed_pw):
+        print('login successful')
+    else:
+        print('login failed')
